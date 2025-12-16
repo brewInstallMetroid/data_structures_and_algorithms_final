@@ -141,7 +141,84 @@ def assignment_four_notes():
                         - consist of a sequence of nodes, starting from a head pointer
                         - each node stores: an element, and a link to the next node
                         - appending and iterating can be a pain unless you initialize the class and object with a tail
+                    - Doubly Linked Lists (DLLs)::
+                        - consist of a sequence of nodes, starting from a head pointer
+                        - each node stores: an element, a link to the next node, and a link to the previous node
+                        - this makes traversal possible in the positive or negative direction in terms of index
+            - Stacks::
+                - Stacks store arbitrary objects.  They are Last-In-First-Out
+                - Main Operations: 
+                    - push(obj): inserts an element to top of stack
+                    - obj pop(): removes and returns the last inserted element
+                - So we only have access to the top of the stack
+                - Python recognizes stacks, so it's super easy to implement and use them within the language
+                - Infix / Postfix Notation::
+                    - Infix:: (4.99 * 1.06 + 6.99 * 1.06 = 19.05 (if just read from L to R))
+                    - Postfix:: (4.99 1.06 * 5.99 + 6.99 1.06 * + = 18.69 (correct, read as numbers followed by their operations))
+                    - Infix to Postfix::
+                        - 1. when a number is seen, it is pushed onto the stack;
+                        - 2. when an operator is seen: the operator is applied to the two numbers that are popped from the stack, and the result is pushed onto the stack
+                        - Ex. || 6 * (5 - (2 + 3) * 8 + 3) || Postfix: 6 5 2 3 + 8 * - 3 + *
+                            - Detailed Steps:
+                                1. Create an empty stack
+                                2. start scanning the infix expression from L to R
+                                3. If current character is an operand, append it to the result string
+                                4. If current character is (, push it onto the stack
+                                5. If current char is ), pop operators from the stack and append them to the result string until you reach a left parentheses, then discard ( and )
+                                6. if char is an operator, push it onto the stack if empty, otherwise compare it to the operator on top.  Push current op if it has higher priority, 
+                                else pop the high priority operator before pushing the current one
+                                7. repeat steps 2 through 6 until you have scanned the entire expression
+                                8. Pop remaining operators from the stack and append them to the result
+                            - Detailed Example:
+                                current     stack       postfix string
+                                1. A                    A
+                                2. *        *           A
+                                3. (        *(          A
+                                4. B        *(          A B
+                                5. +        *(+         A B
+                                6. C        *(+         A B C
+                                7. )        *           A B C +
+                                8.                      A B C + *
+                            - MOOOOORRRRRE::
+                                - a*b+c --> ab * c + 
+                                - 6*(5 + (2 + 3) * 8 + 3) --> 6523 + 8 *+ 3 +*
+                                - (a + b)*(c - d)/(e + f) --> ab + cd -* ef +/
+            - Queues::
+                - Informally, a queue is a data structure where you can only access items in the order they were added to the structure
+                - First-In-First_Out
+                - enqueue: inserts an item at the rear end of a queue
+                - dequeue: removes an item from the front of a queue
+                - When a queue is full, we cannot enqueue, when it is empty, we cannot dequeue
+                - Circular Queues:
+                    - Without circular queues, queues can fill up, even if items are dequeued, they will only be allowed total n items EVER
+                    - with a circular queue, you can continue to enqueue and dequeue as long as the queue doesn't get too full
+                - Possibly the biggest application of Queues in the real world is scheduling.
+            - TIP:: Be careful to align your DS with your task!
     '''
+    return None
+
+def assignment_five_notes():
+    '''
+    Trees and Binary Search Trees
+        - technically, trees are a type of graph, which we will learn about later
+        - traversals are much more difficult with trees
+        - A TREE is a collection of nodes
+            - the collection can be empty, otherwise, it consists of a distinguished node r, called the rood, and 0 or more nonempty subtrees, each of whose
+            roots are connected by a directed edge from r
+            - ROOT is the only node without a parent (visually at the top of a tree)
+            - DEPTH is the distance from the root
+            - HEIGHT is the distance from the farthest leaf (longest path from the visual bottom)
+        - BINARY TREES are a tree in which each node has at MOSt 2 children
+            - a PROPER BINARY TREE has exactly 2 children per parent
+            - Binary trees can have a single node also
+            - trees have special traversal rules since they have a lack of linearity.
+        - TRAVERSALS::
+            - Preorder: parent, left, right
+            - Postorder: left, right, parent
+            - Inorder: left, parent, right
+            
+    '''
+    return None
 
 #Assignment One Functions::
 def binary_search (arr, start, end, key):   
@@ -238,9 +315,20 @@ def merge_sort(arr):
             print(L, R, arr)
     return arr
 #No Code provided for some sorting algorithms - "too complex" for him to test us with
-#End Assignment Three Functions
+#End Assignment Three Functions 
 
 #Assignment Four Functions/Classes::
+class Node2:
+    def __init__ (self, data=None, next=None, prev=None):
+        self.data = data
+        self.next = next
+        self.prev = prev
+class DoublyLinkedList:
+    def __init__ (self):
+        self.head = None
+        self.tail = None
+        self.count = 0
+    '''Doubly Linked lists have very similar methods to a singly linked list, so code is not included for that'''
 class Node:
     def __init__ (self, data=None):
         self.data = data #initializing a Linked List
@@ -282,7 +370,61 @@ class SinglyLinkedList:
             while current.next:
                 current = current.next
             current.next = node #Here you may see an issue... We have to traverse the whole thing to add an item.  You can add a tail upon initialization if you want to make this easier
-#End Assignment Four Functions
+
+    def append_at_a_location(self, new_data, before_data): #To insert an element
+        current = self.head
+        prev = self.head
+        node = Node(new_data)
+        while current:
+            if current.data == before_data:
+                node.next = current
+                prev.next = node
+            prev = current
+            current = current.next
+
+    def append_at_a_location(self, data, index): #To insert an item given an index
+        if self.size < index:
+            print("The list has less number of elemnents")
+            return
+        node = Node(data)
+        if index == 1:
+            node.next = self.head
+            self.head = node
+            return
+        current = self.head.next
+        prev = self.head
+        count = 2
+        while current:
+            if count == index:
+                node.next = current
+                prev.next = node
+                return
+            count += 1
+            prev = current
+            current = current.next
+        '''Deleting nodes is extremely similar to finding nodes, so code for that is NOT included.'''
+#End Assignment Four Classes/Functions
+
+#Assignment Five Classes/Functions
+def preorder(node):
+    if node is None:
+        return
+    print(node.data)
+    preorder(node.left_child)
+    preorder(node.right_child) #recursively explores, starting with the parent, then the left leaf, then the right
+def postorder(node):
+    if node is None:
+        return
+    postorder(node.left_child)
+    postorder(node.right_child)
+    print(node.data) #recursively explores, starting with the left leaf, then right, then parent
+def inorder(node):
+    if node is None:
+        return
+    inorder(node.left_child)
+    print(node.data)
+    inorder(node.right_child) #recursively explores, starting with the left leaf, then parent, then right
+#End Assignment Five Classes/Functions
 
 def main():# Examples with code go here!
     
