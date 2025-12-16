@@ -216,7 +216,20 @@ def assignment_five_notes():
             - Preorder: parent, left, right
             - Postorder: left, right, parent
             - Inorder: left, parent, right
-            
+        - BINARY SEARCH TREES::
+            - let u, v, and w be three nodes such that u is in the left subtree of v and w is in the right, we have key(u) <= key(v) <= key(w)
+            - basically, a root must be greater than (or =) the left leaf and lesser than (or =) the right leaf
+            - an inorder traversal should print the nodes sorted
+            - Insertion gets tricky with BSTs
+                - we need to compare the value of the new node with the root, if it is lesser than, we go left, else right.  We continue this to the end of the tree
+            - Deletion is very difficult
+                - leaf nodes can just be deleted immediately with no adjustments
+                - parents with one child are removed and replaced with their only child
+                - parents with two children are replaced with the largest element in their left subtree or the least element in their right subtree
+            - why would the max nmber of nodes in a BT of height h be 2^(h+1) - 1?
+                - each tier (layer of height) increases the number of nodes by 2^(h+1) after the root node, then we take one away since the root has no partner node.
+                - 2 possibilities added to every leaf every time you expand the tree.
+
     '''
     return None
 
@@ -318,7 +331,7 @@ def merge_sort(arr):
 #End Assignment Three Functions 
 
 #Assignment Four Functions/Classes::
-class Node2:
+class Node2: #For DLL
     def __init__ (self, data=None, next=None, prev=None):
         self.data = data
         self.next = next
@@ -329,7 +342,7 @@ class DoublyLinkedList:
         self.tail = None
         self.count = 0
     '''Doubly Linked lists have very similar methods to a singly linked list, so code is not included for that'''
-class Node:
+class Node: #For SLL
     def __init__ (self, data=None):
         self.data = data #initializing a Linked List
         self.next = None
@@ -402,7 +415,7 @@ class SinglyLinkedList:
             count += 1
             prev = current
             current = current.next
-        '''Deleting nodes is extremely similar to finding nodes, so code for that is NOT included.'''
+        '''Deleting nodes is extremely similar to finding nodes, so code for that isn't included.'''
 #End Assignment Four Classes/Functions
 
 #Assignment Five Classes/Functions
@@ -424,6 +437,68 @@ def inorder(node):
     inorder(node.left_child)
     print(node.data)
     inorder(node.right_child) #recursively explores, starting with the left leaf, then parent, then right
+def count_nodes(t): #To count nodes in any tree
+    if (t==None):
+        return 0
+    return 1 + count_nodes(t.left) + count_nodes(t.right)
+def search(self, data): #To look for an element in a BST
+    current = self.root_node
+    while True:
+        if current is None:
+            print("Item not found")
+            return None
+        elif current.data is data:
+            print("Item found", data)
+            return data
+        elif current.data > data:
+            current = current.left_child
+        else:
+            current = current.right_child
+def find_min_binary(self): #To find the minimum element in a BST, goes all the way to the left of the tree
+    current = self.root_node
+    while current.left_child:
+        current = current.left_child
+    return current.data
+def insert_binary(self): #To insert an element into a BST
+    node = Node(data)
+    if self.root_node is None:
+        self.root_node = node
+        return self.root_node
+    else:
+        current = self.root_node
+        parent = None
+        while True:
+            parent = current
+            if node.data < parent.data:
+                current = current.lefft_child
+                if current is None:
+                    parent.left_child = node
+                    return self.root_node
+            else:
+                current = current.right_child
+                if current is None:
+                    parent.right_child = node
+                    return self.root_node
+def delete_node_binary(root, key): #To delete a node from a BST
+    if root is None:
+        return root
+    if key < root.key:
+        root.left = delete_node_binary(root.left, key)
+    elif key > root.key:
+        root.right = delete_node_binary(root.right, key)
+    else:
+        if root.left is None:
+            temp = root.right
+            root = None
+            return temp
+        elif root.right is None:
+            temp = root.left
+            root = None
+            return temp
+        temp = find_min_binary(root.right)
+        root.key = temp.key
+        root.right = delete_node_binary(root.right, temp.key)
+    return root
 #End Assignment Five Classes/Functions
 
 def main():# Examples with code go here!
