@@ -87,12 +87,64 @@ def assignment_three_notes():
                 - Summary: Simple, but highly inefficient on even moderately large lists. Not sensitive at all
             - SHELL SORT::
                 - An optimization of Insertion Sort that allows the exchange of items that are far apart.
-                - It compares non-consevutive elements 
+                - It compares non-consecutive elements, reducing the gap between elements to be compared as the algorithm progresses.
+                    - basically, it "x" sorts the array for gap size x, then reduces x and repeats until x=1, which is insertion sort.
+                    - You could 5-sort an array, then 3-sort it, then 1-sort it.  An h_k sorted file that is then h_k-1 sorted stays h_k sorted.
+                - Shell sort is, in theory, not any more efficient, but in practice is usually much faster than insertion sort.  It is sensitive.
+                - In fact, if elements sorted are relatively prime to each other, shell sort can be run in O(n^3/2)
+                - Best case: O(n log n)
+                - Average case: O(n^2) (but a little faster)
+                - Worst case: O(n^2)
+                - Summary: More efficient than basic sorts, but sensitive.
+            - DAC Algorithms::
+                - MERGE SORT::
+                    - Divides the array into 2 lists of equal elements, then divide them again, until they are lists of only one element, then recombines them
+                    - ALWAYS O(n log n) complexity
+                    - Merge sort MUST BE RECURSIVE
+                - QUICK SORT::
+                    - A pivot is chosen, then elements less than or equal to pivot are placed before the pivot and greater than after
+                    - Those two halves are then sorted, but splitting the list is enough to make the algorithm much faster
+                    - Quick sort MUST BE RECURSIVE
+                    - Best case: O(n log n)
+                    - Average case: O(n log n)
+                    - Worst case: O(n^2) *if you pick the pivot horribly, you are just sorting rudimentarily
+            - TIM SORT::
+                - The default standard sorting algorithm in all recent Python/Java versions
+                - Tim sort uses different sorting algorithms based on the number of elements in the list and any sorted sub-lists
+                - Best case: O(n)
+                - Average case: O(n log n)
+                - Worst case: O(n log n)
+            - Non-Comparative Algorithms::
+                - COUNTING SORT::
+                    - Assumes that each of the n input elements is an integer in the range 0 to k, when k = O(n), it runs O(n)
+                    - It counts elements given a range of values the elements can fall in and counts occurances of each element, then lists them.
+                - RADIX SORT::
+                    - When each option is of the same 10^x, you can sort by digit (100s, 10s, 1s, done)
+                    - Possible linear time (O(n))
+                - BUCKET SORT::
+                    - Assumes elements are uniformly distributed, meaning the amount of elements in a bucket would be small and the buckets could be sorted quickly.
+                    - Possible linear time (O(n))
     '''
     return None
 
-#Assignment One Code Examples::
-def binary_search (arr, start, end, key):
+def assignment_four_notes():
+    '''
+    Assignment Four Notes::
+        - Lists, Stacks, and Queues: (First Data Structures *Yaaaay!*)
+            - ADTs First:
+                - Abstract Data Types - specify data stored, operations on said data, and error conditions associated with operations
+            - Lists are ADTs that describes a linear collection of data items in some order, in that each element occupies a specific position in the list
+                - So, a list of elements with a linearly increasing index (from 0 to n)
+                - Static arrays are a fixed size and memory is allocated contiguously at the compile time, so you must be careful adding to them
+                - Linked lists are dynamic but have to use pointers to access items in memory
+                    - Singly Linked Lists (SLLs)::
+                        - consist of a sequence of nodes, starting from a head pointer
+                        - each node stores: an element, and a link to the next node
+                        - appending and iterating can be a pain unless you initialize the class and object with a tail
+    '''
+
+#Assignment One Functions::
+def binary_search (arr, start, end, key):   
     while start <= end:
         mid = start + (end - start) // 2
         if arr[mid] == key:
@@ -112,9 +164,9 @@ def binary_search_recursive(arr, start, end, key):
         return binary_search_recursive(arr, start, mid - 1, key)
     else:
         return mid
-#End Assingment One Code Examples
+#End Assingment One Functions
 
-#Assignment Three Code Examples::
+#Assignment Three Functions::
 def insertion_sort(arr):
     for i in range(1, len(arr)):
         key = arr[i]
@@ -122,8 +174,8 @@ def insertion_sort(arr):
         while j>=0 and key < arr[j]:
             arr[j+1] = arr[j]
             j -= 1
-        print(arr)
         arr[j+1] = key
+        print(arr)
     return arr
 def bubble_sort(arr):
     n = len(arr)
@@ -143,7 +195,94 @@ def selection_sort(arr):
         print(arr)
         arr[i], arr[min_idx] = arr[min_idx], arr[i]
     return arr
-#End Assignment Three Code Examples
+def shell_sort(arr):
+    interval = len(arr) // 2
+    while interval > 0:
+        for i in range(interval, len(arr)):
+            temp = arr[i]
+            j = i
+            while j >= interval and arr[j - interval] > temp:
+                arr[j] = arr[j - interval]
+                j -= interval
+            arr[j] = temp
+        interval //= 2
+        print(arr)
+    return arr
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+        merge_sort(L)
+        merge_sort(R)
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i] <= R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+            print(L, R, arr)
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+            print(L, R, arr)
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+            print(L, R, arr)
+    return arr
+#No Code provided for some sorting algorithms - "too complex" for him to test us with
+#End Assignment Three Functions
+
+#Assignment Four Functions/Classes::
+class Node:
+    def __init__ (self, data=None):
+        self.data = data #initializing a Linked List
+        self.next = None
+class SinglyLinkedList:
+    def __init__ (self):
+        self.head = None #initializing a Singly Linked List
+        self.size = 0
+        self.tail = None
+
+    def search(self, data): #To look for an element
+        for node in self.iter():
+            if data == node:
+                return True
+        return False
+
+    def iter(self): #To traverse the List
+        current = self.head
+        while current:
+            val = current.data
+            current = current.next
+            yield val
+
+    def append_using_tail(self, data):
+        node = Node(data)
+        if self.tail:
+            self.tail.next = node
+            self.tail = node
+        else:
+            self.head = node
+            self.tail = node
+
+    def append(self, data): #To add a new element to the end of the list
+        node = Node(data)
+        if self.head is None:
+            self.head = node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = node #Here you may see an issue... We have to traverse the whole thing to add an item.  You can add a tail upon initialization if you want to make this easier
+#End Assignment Four Functions
 
 def main():# Examples with code go here!
     
@@ -169,11 +308,17 @@ def main():# Examples with code go here!
     arr_sel = [29, 10, 14, -500, 37, 13, -10]
     sorted_arr_sel = selection_sort(arr_sel)
     print("Selection Sort Result: ", sorted_arr_sel)
+    arr_shell = [35, 67, -20, 35, -1, -2, 5, 7, 10]
+    sorted_arr_shell = selection_sort(arr_shell)
+    print("Shell Sort Result: ", sorted_arr_shell)
+    arr_merge = [12, 33, 4, 6, 7, 1, -23, 5, 6]
+    sorted_arr_merge = selection_sort(arr_merge)
+    print("Merge Sort Result: ", sorted_arr_merge)
     print("End of Assignment Three Examples\n")
 
 
-    #print("Assignment Four Examples::")
-    #print("End of Assignment Four Examples\n")    
+    print("Assignment Four Examples::")
+    print("End of Assignment Four Examples\n")    
 
 
     #print("Assignment Five Examples::")
