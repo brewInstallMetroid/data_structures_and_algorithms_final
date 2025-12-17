@@ -229,7 +229,194 @@ def assignment_five_notes():
             - why would the max nmber of nodes in a BT of height h be 2^(h+1) - 1?
                 - each tier (layer of height) increases the number of nodes by 2^(h+1) after the root node, then we take one away since the root has no partner node.
                 - 2 possibilities added to every leaf every time you expand the tree.
+            - short and wide BSTs are good, whereas skinny, tall BSTs lead to inefficiency - BST height is always between O(n) and O(log n)
+        - AVL TREES:: (Adelson-Velskii and Landis)
+            - these are binary search trees that are either nearly or perfectly balanced (every parent has 2 children = perf. balanced)
+            - the height of the left and right subtrees can differ by at most 1 <-- THIS IS THE MAIN QUALIFIER!!!
+            - empty trees are determined to be height of -1
+            - All of this means the height of an avl tree is at MOST log n, meaning most tree operations can be performed in O(log n)
+            - This comes with the price, also, of needing to maintain these extra rules when deleting from / adding to an AVL Tree
+                - Inserting
+                    - let's call the first unbalanced node a, from the insertion point back to the root.  A height imbalance requires that a's 22 subtrees' height differ by two
+                    - a violation could happen four ways:
+                        1. An insertion into the left subtree of the left child of a (single rotation)
+                        2. An ins. into right subtree of the left child of a (double rotation)
+                        3. An ins. into left subtree of the right child of a (double rotation)
+                        4. an ins. into right subtree of the right child of a (single rotation)
+                    - This might be the HARDEST concept in the course, but once it clicks, it clicks.  I recommend YouTube Videos and not lecture material to be honest. My professor
+                    seemed too disorganized to explain this concept clearly and effectively.
+                - Deleting
+                    - first, search for the node that is to be deleted in the tree, then delete the contents of the node
+                    - finally, we check the balancing factor of the nodes of the tree, rotating if necessary
+        - B-TREES::
+            - first, M-ARY SEARCH TREES: BSTs without the restriction of having only 2 children per parent node
+                - a perfect MST has the same depth for every leaf
+                - this means while a binary tree with 31 nodes has 5 levels, a 5-ary tree of 31 nodes has 3 levels
+                - M-1 keys are needed to decide which branch to take, and MSTs should be balanced in some way and maintain a bounded height
+            - B-Trees are self-balancing search trees designed to work well on external storage devices
+                - data items are stored at leaves
+                - non-leaf nodes store up to M-1 keys to guide the searching; key i represents the smallest key in subtree i+1
+                - the root is either a leaf or has between 2 and M children
+                - all non-leaf nodes (save for the root) have between ceil(M/2) and M children
+                - all leaves are at the same depth and have between ceil(L/2) and L children
+            - each node of a B-Tree represents a disk block
+            - a 228-ary B-Tree, leaves would be on just level 4.  That's extremely efficient.  Disk reads could be restricted to levels 3 and 4 also,
+            since the upper 2 are small enough to be cached in memory.
+            - Insertion:
+                - if empty, we create one node that is a root node and insert there
+                - else: find the node the key belongs in, insert it if there is enough room, and split the node in half, and insert new key in parent recursively
+                - Splitting nodes:
+                    - take existing node, shove inserted number where it goes, then split the node after the inserted number
+                    - then take the least out of the right leaf and push it up into the parent node, adjusting parent data as needed
+            - Deletion:
+                - if in a leaf and free, delete, move on
+                - if a leaf has the minimum number of items, combine/merge with a neighbor to form a full leaf
+                - this means the parent looses a child, which means if the parent falls below it's minimum, it must also be merged.
+    '''
+    return None
 
+def assignment_six_notes():
+    '''
+    Assignment Six Notes::
+        - PRIORITY QUEUES::
+            - A queue for a collection of prioritized elements that allows arbitrary element insertion and allows the removal of the element that has highest priority
+            - Each item is a pair (key, value)
+            - These are basically a sorted Python dictionary that act like stacks.
+            - elements are added with their priorities, but you remove the highest priority item, similar to popping a stack
+            - Implementations:
+                - unsorted list:
+                    - takes O(1) time to add an element
+                    - takes O(n) time to find the smallest key
+                - sorted list:
+                    - takes O(n) time to add an element
+                    - takes O(1) time to find the smallest key
+                - AVL Tree:
+                    - everything takes O(log n), but this is obviously difficult
+                - Heaps (still not defined):
+                    - takes O(1) time to find the smallest key
+                    - insert takes O(1) time on avg and O(log n) worst case
+                    - remove_min takes O(log n)
+        - HEAPS::
+            - A MIN HEAP is a binary tree storing keys at its nodes while satisfying some properties:
+                - Heap-Order or the value property:
+                    - for every internal node v other than the root :: key(v) >= key(parent(v))
+                - Structure property:
+                    - heaps are complete binary trees (NOT binary SEARCH trees, JUST BTs)!
+                    - let h be the height of the heap:
+                        - for i = 0, ..., h-1, there are 2^i nodes of depth i
+                        - at depth h-1, the internal nodes are to the left of the external nodes
+            - The last node of a heap is the rightmost node of maximum depth
+            - The max heap s defined similarly to the min heap
+            - Heaps are filled as a book is read, not from the top branching downwards.
+            - A MAX HEAP is a binary tree the same as a min heap except that the properties are slightly different:
+                - for every internal node v other than the root :: key(v) <= key(parent(v))
+            - Array-Based Heap Implementation:
+                - We can represent a heap with n keys by means of an array of length n
+                - links between nodes are not explicitly stores
+                - funnily enough, array-based heaps are actually one-dimensional data structures, despite the fact they are still trees
+            - inserting new elements into a min heap, you still need to insert an element into the next spot reading-wise, then shift it up to it's correct position priority-wise
+            - it is possible, also, to merge two heaps given a new key.  Take the new key, make it the new root, and then heapify or uphead to reorganize the heap based 
+            on the minheap rules
+            - building a heap from an array of elements (bottom up) runs in O(n) time
+        - D HEAPS::
+            - D Heaps are exactly like binary heaps except that all nodes have d children
+            - This means that you will end up with more time per level for down heap, but you have much fewer levels
+            - Upheap won't change too much since you still have one parent per leaf
+        - Can we use Heaps to sort items??
+        - HEAP SORT::
+            - first, you build a heap out of the elements that needs sorting, then you run delete_min n times
+            - record the elements deleted at the end of the list, which will end up forming your sorted list
+            - this is much faster than basic sorting algorithms at O(n log n) time
+        - GOOD QUESTIONS TO LEARN::
+            - how would you find the minimum element in a max heap?
+            - how would you conver a max heap into a min heap?
+        - MAPS::
+            - A MAP is a searchable collection of items that consists of key-value pairs
+            - keys are unique and multiple items with the same key are not allowed!
+                - This doesn't mean that values are necessarily unique, though
+            - The main operations of a map are for searching for, inserting, and deleting items
+        - DICTIONARIES::
+            - Everyone's favorite Python DS, this is actually a unique part of Python as a language and they are an abstraction
+        - MAPS and DICTS in Python can be used semi-interchangeably
+            - This means all the same Python methods for manipulating and creating dictionaries work on MAPS as well
+        - HASH TABLES::
+            - These are one of the most practical data structures for implementing a map (Python uses these to make dictionaries!)
+            - we have to use a hash function to map each key k to an integer in the range [0, N-1], where N is the capacity of the bucket array for a hash table
+                - basically we have a function that, given an element, will tell us exactly where that element is, "mapping" the element to that location given the hashing function
+            - hashing can make the expected case of deleting and searching O(1) time
+            - A HASH TABLE or HASH MAP is a data structure that uses a hash function to efficiently translate certain keys into associated values.  The hash function is used to
+            transform the key into the index of an array element, where the corresponding value is to be sought.
+            - HASHING IS GENIUS
+            - Ideal hash table structure is just a list of some fixed size containing items, these items containing a key that will return the stored data when ran through the
+            hash function
+            - A Hashing Collision is when one key houses more than one data point.
+            - You want hash functions to be simple to compute and MUST attempt to distribute the keys evenly among cells
+            - If we know which keys will occur in advance we can write perfect hash functions, but we usually don't
+            - If your input keys are integers, then simply key mod tablesize is an okay general strategy, though it isn't perfect
+            - So how do we tackle all of these challenges while still being practical?
+                - to decide a size for a hash table, keep this in mind:
+                    - small tables are likely to produce many collisions
+                    - large tables are likely to waste valuable space
+                - generalizing things a bit:
+                    - A hash function could be specified as the composition of two functions:
+                        - hash code:
+                            h_1: keys -> integers
+                        - compression function:
+                            h_2: integers -> [0, N-1]
+                - Resolving collisions:
+                    - Chaining
+                        - When collision exists, we just put elements and their keys in a linked list at the hashed location 
+                        - This does leave that if your hashing funciton is not chosen well, you will end up with an extremely large chain
+                        - So, if implemented poorly, your searching can creep towards order n time
+                        - SEPARATE CHAINING is when your hash function yields a pointer that points to a linked list of collision elements
+                        - delta is the load factor of a hash table defined as the number of elements in the hash table / the table size
+                            - given this, we want to make the table size as large as the number of elements expected
+                            - it is also good to keep the table size PRIME!
+                    - Linear Probing
+                        - all elements are still stored in the table, but collisions are placed in the next place storage-wise (circularly)
+                        - Collided elements are going to clump together
+                        - If you end up with elements that collide and the next position is NOT available, the element finds the next available element and goes there
+                        - in terms of searching, you may end up having to look at a few elements, but the hash function yields a good starting place most of the time
+                        - this also creates a problem when it comes to deleting elemnts, since empty cells could mislead the search algorithm
+                            - to solve this, we introduce a special object called AVAILABLE, which replaces deleted elements, but still allows the search to move on
+                        - Primary Clustering is the tendency for linear probing hash tables collision resolution schemes to create long sequences of filled slots
+                    - Quadratic Probing
+                        - does the same thing as linear probing, but iterates in squares of 1, 2, 3, ..., n to find an empty bucket instead of linearly
+                        - this still creates Secondary Clustering, though, but it is much less of an issue since things that originally mapped to the same location will follow
+                        the same pattern
+                    - Double Hashing
+                        - double hashing uses a secondary hash function d(k) and handles collisions by iterating in d(1, 2, 3, ..., n) to find an empty cell
+                    - Rehashing
+                        - if the table gets too full, you can just stop and rehash the whole table as a new table that is around twice as big with probably a different hash function
+                - So, in general, hashing is great but is complicated to effectively implement.  In a very rare worst case, hashing will run O(n), but most of the time it will run O(1)
+    '''
+    return None
+
+def assignment_seven_notes():
+    '''
+    Assignment Seven Notes::
+        - GRAPHS::
+            - Every element in a graph is represented by a node, every relationship is represented by an edge
+            - Graphs and graph algorithms can help you model and find a solution respectively
+            - "Networks" are really just graphs - networks are graphs dressed with an abstraction
+            - Graphs = (Verticies, Edges)
+                - V = vertex set (n = |V| = total verticies)
+                - E = edge set (m = |E| = total edges)
+                - G_size = n + m
+            - A Cycle in a graph - A path <v_0, v_1, ..., v_k> in an undirected graph forma s cycle if v_0 = v_k and k>=3
+                - in an directed graph, <v_0, v_1, ..., v_k> where v_0 = v_k and k >= 2
+            - Acyclic Graphs - graphs with no cycles at all
+                - DAG (Directed A.G.) - what it sounds like...
+        - GRAPH ALGORITHMS::
+            - Graph Searches:
+                - BFS::
+                    - discovers all vertices at diestance k from s before discovering any vertices at distance k+1
+                    - from one node to all its neighbors, then to the neighbors' neighbors, and so on
+                    - time complexity: O(n + m), each vertex is enqueued O(1) at most once, then every each adjacency list is scanned at most once
+                - DFS::
+                    - from one node to a neighbor, then to another neighbor, until you can't find a neighbor anymore, then start exploring
+                    - time complexity: O(n + m), again, for the same reason
+                - 
     '''
     return None
 
@@ -459,7 +646,7 @@ def find_min_binary(self): #To find the minimum element in a BST, goes all the w
     while current.left_child:
         current = current.left_child
     return current.data
-def insert_binary(self): #To insert an element into a BST
+def insert_binary(self, data): #To insert an element into a BST
     node = Node(data)
     if self.root_node is None:
         self.root_node = node
@@ -499,6 +686,22 @@ def delete_node_binary(root, key): #To delete a node from a BST
         root.key = temp.key
         root.right = delete_node_binary(root.right, temp.key)
     return root
+class TreeNode(object):
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.height = 1
+class AVL_Tree(object):
+    def get_height(self, root):
+        if not root:
+            return 0
+        return root.height
+    def get_balance(self, root):
+        if not root:
+            return 0
+        return self.get_height(root.left) - self.get_height(root.right)
+#No code for AVL Tree Rotations, I'm way to tired to type all that
 #End Assignment Five Classes/Functions
 
 def main():# Examples with code go here!
@@ -532,23 +735,6 @@ def main():# Examples with code go here!
     sorted_arr_merge = selection_sort(arr_merge)
     print("Merge Sort Result: ", sorted_arr_merge)
     print("End of Assignment Three Examples\n")
-
-
-    print("Assignment Four Examples::")
-    print("End of Assignment Four Examples\n")    
-
-
-    #print("Assignment Five Examples::")
-    #print("End of Assignment Five Examples\n")
-
-
-    #print("Assignment Six Examples::")
-    #print("End of Assignment Six Examples\n")
-
-
-    #print("Assignment Seven Examples::")
-    #print("End of Assignment Seven Examples\n")
-
 
 
 if __name__ == "__main__":
