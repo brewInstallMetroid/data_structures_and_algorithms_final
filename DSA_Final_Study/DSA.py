@@ -407,6 +407,9 @@ def assignment_seven_notes():
                 - in an directed graph, <v_0, v_1, ..., v_k> where v_0 = v_k and k >= 2
             - Acyclic Graphs - graphs with no cycles at all
                 - DAG (Directed A.G.) - what it sounds like...
+            - Strongly connected components are pieces of a graph were every node is reachable from every other node
+                - to find these, call DFS to compute finishing times, then find the reverse of the edges of the graph (G^T), then call DFS on that graph using the 
+                order of the first DFS ordering, grouping the new DFS items together
         - GRAPH ALGORITHMS::
             - Graph Searches:
                 - BFS::
@@ -416,7 +419,41 @@ def assignment_seven_notes():
                 - DFS::
                     - from one node to a neighbor, then to another neighbor, until you can't find a neighbor anymore, then start exploring
                     - time complexity: O(n + m), again, for the same reason
-                - 
+            - TOPOLOGICAL SORT::
+                - A linear ordering of all a graph's vertices such that if G contains an edge u-->v, u appears before v in the ordering
+                - if the graph is not acyclic, then no linear ordering is possible
+                - So this is different than a typical "sort", it kind of sorts edges
+                - It works by:
+                    1. call DFS to compute finishing times for each vertex
+                    2. as each vertex is finished, insert it onto the front of a linked list
+                    3. return the list of vertexes
+            - SPANNING TREES::
+                - A subgraph of G that is also a tree and includes every node of G
+                - This means connecting every node as efficiently as possible with N-1 edges
+                - The MIN COST SPANNING TREE is a min spanning tree, but with edge weights in mind to find the cheapest, and thus shortest, way to connect every node
+                    - Kruskal's Algorithm::
+                        - Sort the edges from small to large
+                        - Go in order from heaviest to lightest edge, adding them to the min. spanning tree if adding them DOES NOT CREATE A CYCLE
+                        - output the tree
+                        - running time is O(m log m) = O(m log n)
+                        - this algorithm is GREEDY, meaning it accepts a LOCALLY OPTIMAL CHOICE in hopes it will eventually yield a GLOBALLY OPTIMAL SOLUTION
+                            - This means if a graph is sparse, Kruskal's might not even yield a connected MST
+                            - greedy algorithms are simple to design and implement and fast, also
+                    - Prim's Algorithm::
+                        - Instead of starting with n nodes and hoping things end up connected, Prim's starts somewhere and then picks the cheapest edge forward
+                        - Still checks for cycles
+                        - running time is O(m log m) = O(m log n)
+                    - So... Kruskal's starts with a forest and merges into a tree, whereas Prim's stays a tree always
+            - SHORTEST PATH PROBLEMS:
+                - Dijkstra's Algorithm
+                    - single-source shrotest path problem
+                    - It cannot be done with negative-weight edges
+                    - Done by "Relaxing" an edge (u, v), or testing whetehr we can improve the shortes path to v found so far by going through u
+                        - verticies in V - S reside in a min-priority queue
+                            - keys in q are estimates of shortest-path weights d[u]
+                        - repeatedly select a vertex u in V-s, with the minimum shortest-path estimate d[u]
+                        - relax all edges leaving u
+                    - Running time: O(m log n)
     '''
     return None
 
